@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="spinner"></div>
+        <p id="message">Redirecting...</p>
+    </div>
+
+    <script>
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        function redirect() {
+            const author = getUrlParameter('author');
+            const type = getUrlParameter('type');
+
+            // Validate parameters
+            if (!author) {
+                document.getElementById('message').innerHTML = '<span class="error">Error: Missing "author" parameter</span>';
+                return;
+            }
+
+            if (!type) {
+                document.getElementById('message').innerHTML = '<span class="error">Error: Missing "type" parameter</span>';
+                return;
+            }
+
+            if (type !== 'posts' && type !== 'comments') {
+                document.getElementById('message').innerHTML = '<span class="error">Error: "type" must be either "posts" or "comments"</span>';
+                return;
+            }
+
+            // Construct the redirect URL
+            const baseUrl = 'https://arctic-shift.photon-reddit.com/search';
+            const fun = type === 'posts' ? 'posts_search' : 'comments_search';
+            const redirectUrl = `${baseUrl}?fun=${fun}&author=${encodeURIComponent(author)}&limit=50&sort=desc`;
+
+            // Redirect
+            window.location.href = redirectUrl;
+        }
+
+        // Execute redirect when page loads
+        redirect();
+    </script>
+</body>
+</html>
